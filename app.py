@@ -95,27 +95,27 @@ st.sidebar.markdown("""
 # Model names and file paths
 MODEL_INFO = {
     "Logistic Regression": {
-        "file": "model/logistic_regression.pkl",
+        "file": "models/logistic_regression.pkl",
         "scaled": True,
         "description": "Linear model with L2 regularization. Best overall performer (Accuracy: 94.93%, AUC: 98.86%)."
     },
     "Decision Tree": {
-        "file": "model/decision_tree.pkl",
+        "file": "models/decision_tree.pkl",
         "scaled": False,
         "description": "Tree-based model with interpretable decision rules (Accuracy: 94.58%, AUC: 95.60%)."
     },
     "K-Nearest Neighbors": {
-        "file": "model/knn.pkl",
+        "file": "models/knn.pkl",
         "scaled": True,
         "description": "Instance-based learning with k=5 neighbors (Accuracy: 90.42%, AUC: 92.97%)."
     },
     "Naive Bayes": {
-        "file": "model/naive_bayes.pkl",
+        "file": "models/naive_bayes.pkl",
         "scaled": True,
         "description": "Gaussian Naive Bayes for continuous features (Accuracy: 89.13%, AUC: 97.67%)."
     },
     "Support Vector Machine": {
-        "file": "model/svm.pkl",
+        "file": "models/svm.pkl",
         "scaled": True,
         "description": "Linear SVM with maximum margin classifier (Accuracy: 93.65%, AUC: 98.31%)."
     }
@@ -126,8 +126,8 @@ MODEL_INFO = {
 def load_artifacts():
     """Load scaler and label encoder"""
     try:
-        scaler = joblib.load('scaler.pkl')
-        label_encoder = joblib.load('target_label_encoder.pkl')
+        scaler = joblib.load('models/scaler.pkl')
+        label_encoder = joblib.load('models/target_label_encoder.pkl')
         return scaler, label_encoder
     except Exception as e:
         st.error(f"Error loading artifacts: {e}")
