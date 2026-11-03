@@ -603,7 +603,7 @@ st.markdown("""
     <p><strong>EV Battery Health Prediction System</strong></p>
     <p>M.Tech (AIML) - Machine Learning Assignment 2</p>
     <p>Student: PRAKASH B | ID: 2026AJ05668</p>
-    <p>BITS Pilani Work Integrated Learning Programmes</p>
+    <p>BITS Pilani Work Integrated Learning Programme</p>
 </div>
 """, unsafe_allow_html=True)
 

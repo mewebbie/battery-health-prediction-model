@@ -281,7 +281,7 @@ The app will open in your default web browser at `http://localhost:8501`
 ## Streamlit App
 
 ### Live Deployment:
-**Streamlit App Link:** [Coming Soon - Will be deployed on Streamlit Community Cloud]
+**Streamlit App Link:** [https://battery-health-prediction-model.streamlit.app/](https://battery-health-prediction-model.streamlit.app/)
 
 ### Features:
 1. **Dataset Upload**: Upload test_data.csv to evaluate models
@@ -358,7 +358,7 @@ The app will open in your default web browser at `http://localhost:8501`
 **Student:** PRAKASH B
 **Student ID:** 2026AJ05668
 **Program:** M.Tech (AIML)
-**Institution:** BITS Pilani Work Integrated Learning Programmes
+**Institution:** BITS Pilani Work Integrated Learning Programme
 
 ---
 
