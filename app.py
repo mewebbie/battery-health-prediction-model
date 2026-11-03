@@ -212,8 +212,8 @@ def main():
     # Get class names
     class_names = label_encoder.classes_
 
-    # File uploader
-    st.markdown("## 📁 Step 1: Upload Test Data")
+    # File uploader at the top (always visible)
+    st.markdown("## 📁 Upload Test Data")
     uploaded_file = st.file_uploader(
         "Upload your test data CSV file (must contain features and target column)",
         type=['csv'],
@@ -227,10 +227,6 @@ def main():
 
             st.success(f"✅ Data loaded successfully! Shape: {df.shape}")
 
-            # Show data preview
-            with st.expander("📊 View Data Preview (First 10 rows)"):
-                st.dataframe(df.head(10))
-
             # Check for target column
             target_column = 'failure_risk_label'
             if target_column not in df.columns:
@@ -241,10 +237,8 @@ def main():
             X_test = df.drop(columns=[target_column])
             y_test = df[target_column]
 
-            st.info(f"📊 Features: {X_test.shape[1]} | Samples: {X_test.shape[0]} | Classes: {y_test.nunique()}")
-
             # Model selection
-            st.markdown("## 🤖 Step 2: Select Classification Model")
+            st.markdown("## 🤖 Select Classification Model")
             selected_model_name = st.selectbox(
                 "Choose a model to evaluate:",
                 list(MODEL_INFO.keys()),
@@ -285,8 +279,6 @@ def main():
             st.success("✅ Predictions completed!")
 
             # Calculate metrics
-            st.markdown("## 📈 Step 3: Evaluation Metrics")
-
             if y_scores is not None:
                 metrics = calculate_metrics(y_test, y_pred, y_scores, model.classes_)
             else:
@@ -300,73 +292,156 @@ def main():
                     'MCC': matthews_corrcoef(y_test, y_pred)
                 }
 
-            # Display metrics in columns
-            col1, col2, col3 = st.columns(3)
-
-            with col1:
-                st.metric("🎯 Accuracy", f"{metrics['Accuracy']:.4f}")
-                st.metric("📊 Precision", f"{metrics['Precision']:.4f}")
-
-            with col2:
-                if not np.isnan(metrics['AUC']):
-                    st.metric("📈 AUC Score", f"{metrics['AUC']:.4f}")
-                else:
-                    st.metric("📈 AUC Score", "N/A")
-                st.metric("🔍 Recall", f"{metrics['Recall']:.4f}")
-
-            with col3:
-                st.metric("⚖️ F1 Score", f"{metrics['F1 Score']:.4f}")
-                st.metric("🔗 MCC", f"{metrics['MCC']:.4f}")
-
-            # Detailed metrics table
-            with st.expander("📋 View Detailed Metrics Table"):
-                metrics_df = pd.DataFrame([metrics])
-                st.dataframe(metrics_df.style.format("{:.4f}"))
-
-            # Confusion Matrix
-            st.markdown("## 🔲 Step 4: Confusion Matrix")
-
-            col1, col2 = st.columns([2, 1])
-
-            with col1:
-                fig = plot_confusion_matrix(y_test, y_pred, class_names)
-                st.pyplot(fig)
-
-            with col2:
-                st.markdown("### 📊 Matrix Interpretation")
-                st.markdown("""
-                The confusion matrix shows:
-                - **Diagonal**: Correct predictions
-                - **Off-diagonal**: Misclassifications
-
-                **Rows**: True labels
-                **Columns**: Predicted labels
-                """)
-
-                # Calculate total accuracy from confusion matrix
-                cm = confusion_matrix(y_test, y_pred)
-                total_correct = np.trace(cm)
-                total_samples = np.sum(cm)
-                st.metric("Total Correct", f"{total_correct}/{total_samples}")
-
-            # Classification Report
-            st.markdown("## 📄 Step 5: Classification Report")
-
+            # Calculate classification report for later use
             report = classification_report(y_test, y_pred,
                                          target_names=class_names,
                                          output_dict=True,
                                          zero_division=0)
 
-            # Convert to DataFrame for better display
-            report_df = pd.DataFrame(report).transpose()
+            # Create tabs for better organization
+            tab1, tab2, tab3, tab4, tab5 = st.tabs([
+                "📊 Overview",
+                "📈 Performance Metrics",
+                "🔲 Confusion Matrix",
+                "📄 Classification Report",
+                "💾 Export Results"
+            ])
 
-            st.dataframe(report_df.style.format("{:.4f}").background_gradient(cmap='RdYlGn', subset=['f1-score']))
+            # TAB 1: Overview
+            with tab1:
+                st.markdown("### 🎯 Quick Summary")
 
-            # Per-class analysis
-            with st.expander("📊 Per-Class Performance Analysis"):
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    st.metric("📋 Total Samples", f"{X_test.shape[0]:,}")
+                    st.metric("🔢 Features", X_test.shape[1])
+                with col2:
+                    st.metric("🎯 Classes", y_test.nunique())
+                    st.metric("🤖 Model", selected_model_name)
+                with col3:
+                    st.metric("✅ Accuracy", f"{metrics['Accuracy']:.2%}")
+                    st.metric("📈 AUC", f"{metrics['AUC']:.4f}" if not np.isnan(metrics['AUC']) else "N/A")
+
+                st.markdown("---")
+
+                # Data preview
+                st.markdown("### 📊 Data Preview")
+                col1, col2 = st.columns([2, 1])
+
+                with col1:
+                    st.dataframe(df.head(10), use_container_width=True)
+
+                with col2:
+                    st.markdown("#### 📈 Class Distribution")
+                    class_dist = y_test.value_counts()
+                    for idx, (class_label, count) in enumerate(class_dist.items()):
+                        class_name = class_names[class_label]
+                        percentage = (count / len(y_test)) * 100
+                        st.metric(f"{class_name}", f"{count:,} ({percentage:.1f}%)")
+
+            # TAB 2: Performance Metrics
+            with tab2:
+                st.markdown("### 📈 Model Performance Metrics")
+
+                # Display metrics in columns
+                col1, col2, col3 = st.columns(3)
+
+                with col1:
+                    st.metric("🎯 Accuracy", f"{metrics['Accuracy']:.4f}")
+                    st.metric("📊 Precision", f"{metrics['Precision']:.4f}")
+
+                with col2:
+                    if not np.isnan(metrics['AUC']):
+                        st.metric("📈 AUC Score", f"{metrics['AUC']:.4f}")
+                    else:
+                        st.metric("📈 AUC Score", "N/A")
+                    st.metric("🔍 Recall", f"{metrics['Recall']:.4f}")
+
+                with col3:
+                    st.metric("⚖️ F1 Score", f"{metrics['F1 Score']:.4f}")
+                    st.metric("🔗 MCC", f"{metrics['MCC']:.4f}")
+
+                st.markdown("---")
+
+                # Detailed metrics table
+                st.markdown("### 📋 Detailed Metrics Table")
+                metrics_df = pd.DataFrame([metrics])
+                st.dataframe(metrics_df.style.format("{:.4f}"), use_container_width=True)
+
+                st.markdown("---")
+
+                # Metric explanations
+                with st.expander("ℹ️ Understanding the Metrics"):
+                    st.markdown("""
+                    **Accuracy**: Overall percentage of correct predictions
+
+                    **AUC (Area Under ROC Curve)**: Model's ability to distinguish between classes (higher is better)
+
+                    **Precision**: Of all positive predictions, how many were actually correct
+
+                    **Recall**: Of all actual positives, how many were correctly identified
+
+                    **F1 Score**: Harmonic mean of precision and recall
+
+                    **MCC (Matthews Correlation Coefficient)**: Balanced metric for imbalanced datasets (-1 to +1)
+                    """)
+
+            # TAB 3: Confusion Matrix
+            with tab3:
+                st.markdown("### 🔲 Confusion Matrix Visualization")
+
+                col1, col2 = st.columns([2, 1])
+
+                with col1:
+                    fig = plot_confusion_matrix(y_test, y_pred, class_names)
+                    st.pyplot(fig)
+
+                with col2:
+                    st.markdown("### 📊 Matrix Interpretation")
+                    st.markdown("""
+                    The confusion matrix shows:
+                    - **Diagonal**: Correct predictions
+                    - **Off-diagonal**: Misclassifications
+
+                    **Rows**: True labels
+                    **Columns**: Predicted labels
+                    """)
+
+                    # Calculate total accuracy from confusion matrix
+                    cm = confusion_matrix(y_test, y_pred)
+                    total_correct = np.trace(cm)
+                    total_samples = np.sum(cm)
+                    st.metric("Total Correct", f"{total_correct}/{total_samples}")
+                    st.metric("Accuracy", f"{(total_correct/total_samples)*100:.2f}%")
+
+                st.markdown("---")
+
+                # Confusion matrix details
+                st.markdown("### 🔍 Confusion Matrix Details")
+                cm_df = pd.DataFrame(cm,
+                                    index=[f"True {c}" for c in class_names],
+                                    columns=[f"Pred {c}" for c in class_names])
+                st.dataframe(cm_df, use_container_width=True)
+
+            # TAB 4: Classification Report
+            with tab4:
+                st.markdown("### 📄 Detailed Classification Report")
+
+                # Convert to DataFrame for better display
+                report_df = pd.DataFrame(report).transpose()
+
+                st.dataframe(
+                    report_df.style.format("{:.4f}").background_gradient(cmap='RdYlGn', subset=['f1-score']),
+                    use_container_width=True
+                )
+
+                st.markdown("---")
+
+                # Per-class analysis
+                st.markdown("### 📊 Per-Class Performance Analysis")
                 for class_name in class_names:
                     if class_name in report:
-                        st.markdown(f"### Class: {class_name}")
+                        st.markdown(f"#### Class: {class_name}")
                         class_metrics = report[class_name]
 
                         col1, col2, col3, col4 = st.columns(4)
@@ -377,23 +452,93 @@ def main():
 
                         st.markdown("---")
 
-            # Download predictions
-            st.markdown("## 💾 Download Predictions")
+            # TAB 5: Export Results
+            with tab5:
+                st.markdown("### 💾 Download Predictions and Results")
 
-            predictions_df = pd.DataFrame({
-                'True_Label': y_test.values,
-                'Predicted_Label': y_pred,
-                'True_Class': [class_names[i] for i in y_test.values],
-                'Predicted_Class': [class_names[i] for i in y_pred]
-            })
+                # Predictions dataframe
+                predictions_df = pd.DataFrame({
+                    'True_Label': y_test.values,
+                    'Predicted_Label': y_pred,
+                    'True_Class': [class_names[i] for i in y_test.values],
+                    'Predicted_Class': [class_names[i] for i in y_pred],
+                    'Correct': y_test.values == y_pred
+                })
 
-            csv = predictions_df.to_csv(index=False)
-            st.download_button(
-                label="📥 Download Predictions as CSV",
-                data=csv,
-                file_name=f"predictions_{selected_model_name.replace(' ', '_').lower()}.csv",
-                mime="text/csv"
-            )
+                # Add prediction probabilities if available
+                if y_scores is not None and hasattr(model, 'predict_proba'):
+                    for idx, class_name in enumerate(class_names):
+                        predictions_df[f'Prob_{class_name}'] = y_scores[:, idx]
+
+                col1, col2 = st.columns(2)
+
+                with col1:
+                    st.markdown("#### 📥 Download Predictions")
+                    csv = predictions_df.to_csv(index=False)
+                    st.download_button(
+                        label="📥 Download Predictions CSV",
+                        data=csv,
+                        file_name=f"predictions_{selected_model_name.replace(' ', '_').lower()}.csv",
+                        mime="text/csv"
+                    )
+
+                    st.markdown("**File includes:**")
+                    st.markdown("- True and predicted labels")
+                    st.markdown("- Correctness indicator")
+                    if y_scores is not None and hasattr(model, 'predict_proba'):
+                        st.markdown("- Prediction probabilities for each class")
+
+                with col2:
+                    st.markdown("#### 📊 Download Metrics Report")
+                    metrics_report = f"""
+Model Performance Report
+========================
+Model: {selected_model_name}
+Dataset Size: {X_test.shape[0]} samples
+Features: {X_test.shape[1]}
+
+Metrics
+-------
+Accuracy: {metrics['Accuracy']:.4f}
+AUC: {metrics['AUC']:.4f}
+Precision: {metrics['Precision']:.4f}
+Recall: {metrics['Recall']:.4f}
+F1 Score: {metrics['F1 Score']:.4f}
+MCC: {metrics['MCC']:.4f}
+
+Per-Class Performance
+--------------------
+{pd.DataFrame(report).transpose().to_string()}
+"""
+                    st.download_button(
+                        label="📥 Download Metrics Report",
+                        data=metrics_report,
+                        file_name=f"metrics_report_{selected_model_name.replace(' ', '_').lower()}.txt",
+                        mime="text/plain"
+                    )
+
+                st.markdown("---")
+
+                # Preview predictions
+                st.markdown("### 👀 Preview Predictions")
+
+                # Filter options
+                col1, col2 = st.columns(2)
+                with col1:
+                    show_only_errors = st.checkbox("Show only misclassifications")
+                with col2:
+                    n_rows = st.slider("Number of rows to display", 5, 100, 20)
+
+                if show_only_errors:
+                    display_df = predictions_df[predictions_df['Correct'] == False].head(n_rows)
+                    if len(display_df) == 0:
+                        st.success("🎉 No misclassifications found!")
+                    else:
+                        st.dataframe(display_df, use_container_width=True)
+                else:
+                    st.dataframe(predictions_df.head(n_rows), use_container_width=True)
+
+                st.markdown(f"**Total Misclassifications:** {(predictions_df['Correct'] == False).sum()} / {len(predictions_df)}")
 
         except Exception as e:
             st.error(f"❌ Error processing file: {e}")
@@ -403,31 +548,53 @@ def main():
         # Show instructions when no file is uploaded
         st.info("👆 Please upload a test data CSV file to begin evaluation.")
 
-        st.markdown("### 📝 Expected File Format")
-        st.markdown("""
-        The test data CSV should contain:
-        - All 51 feature columns (after preprocessing)
-        - One target column: `failure_risk_label`
-        - No missing values
+        # Create tabs for home page
+        tab1, tab2 = st.tabs(["📝 Instructions", "🏆 Model Comparison"])
 
-        You can use the `test_data.csv` file included in the repository.
-        """)
+        with tab1:
+            st.markdown("### 📝 Expected File Format")
+            st.markdown("""
+            The test data CSV should contain:
+            - All 51 feature columns (after preprocessing)
+            - One target column: `failure_risk_label`
+            - No missing values
 
-        # Show model comparison
-        st.markdown("### 🏆 Model Performance Comparison")
+            You can use the `test_data.csv` file included in the repository.
+            """)
 
-        comparison_data = {
-            'Model': list(MODEL_INFO.keys()),
-            'Accuracy': [0.9493, 0.9458, 0.9042, 0.8913, 0.9365],
-            'AUC': [0.9886, 0.9560, 0.9297, 0.9767, 0.9831],
-            'Precision': [0.9486, 0.9456, 0.8844, 0.9350, 0.9332],
-            'Recall': [0.9493, 0.9458, 0.9042, 0.8913, 0.9365],
-            'F1': [0.9488, 0.9457, 0.8886, 0.9054, 0.9261],
-            'MCC': [0.7999, 0.7884, 0.5729, 0.6826, 0.7363]
-        }
+            st.markdown("### 🚀 Quick Start Guide")
+            st.markdown("""
+            1. **Upload Data**: Click the file uploader above and select `test_data.csv`
+            2. **Select Model**: Choose from 5 trained classification models
+            3. **Explore Results**: Navigate through tabs to view different aspects:
+               - 📊 Overview: Quick summary and data preview
+               - 📈 Performance Metrics: Detailed evaluation metrics
+               - 🔲 Confusion Matrix: Visual representation of predictions
+               - 📄 Classification Report: Per-class performance
+               - 💾 Export Results: Download predictions and reports
+            """)
 
-        comparison_df = pd.DataFrame(comparison_data)
-        st.dataframe(comparison_df.style.highlight_max(axis=0, subset=['Accuracy', 'AUC', 'Precision', 'Recall', 'F1', 'MCC']))
+        with tab2:
+            st.markdown("### 🏆 Model Performance Comparison")
+
+            comparison_data = {
+                'Model': list(MODEL_INFO.keys()),
+                'Accuracy': [0.9493, 0.9458, 0.9042, 0.8913, 0.9365],
+                'AUC': [0.9886, 0.9560, 0.9297, 0.9767, 0.9831],
+                'Precision': [0.9486, 0.9456, 0.8844, 0.9350, 0.9332],
+                'Recall': [0.9493, 0.9458, 0.9042, 0.8913, 0.9365],
+                'F1': [0.9488, 0.9457, 0.8886, 0.9054, 0.9261],
+                'MCC': [0.7999, 0.7884, 0.5729, 0.6826, 0.7363]
+            }
+
+            comparison_df = pd.DataFrame(comparison_data)
+            st.dataframe(
+                comparison_df.style.highlight_max(axis=0, subset=['Accuracy', 'AUC', 'Precision', 'Recall', 'F1', 'MCC']),
+                use_container_width=True
+            )
+
+            st.markdown("**🏅 Best Overall Model:** Logistic Regression")
+            st.markdown("Achieves the highest scores across all six evaluation metrics.")
 
 # Footer
 st.markdown("---")
