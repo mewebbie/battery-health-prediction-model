@@ -118,10 +118,10 @@ battery-health-prediction-model/
 ├── requirements.txt                     # Python dependencies
 ├── README.md                            # This file
 ├── LICENSE                              # MIT License
+├── test_data.csv                        # Test dataset for Streamlit app (10,000 samples)
 │
 ├── data/                                # Dataset files
 │   ├── ev_battery_health.csv          # Original dataset (50,000 samples)
-│   ├── test_data.csv                  # Test dataset for Streamlit app
 │   ├── data_dictionary.csv            # Data dictionary
 │   └── README_DB.md                   # Database documentation
 │
@@ -158,10 +158,10 @@ battery-health-prediction-model/
 - **requirements.txt**: All Python package dependencies required for the project
 - **README.md**: Comprehensive project documentation
 - **LICENSE**: MIT License
+- **test_data.csv**: 10,000 test samples (20% of dataset) for Streamlit app evaluation
 
 **data/**: Dataset and database documentation
 - **ev_battery_health.csv**: Original dataset with 50,000 EV battery observations
-- **test_data.csv**: 10,000 test samples (20% of dataset) for model evaluation
 - **data_dictionary.csv**: Data dictionary describing all features
 - **README_DB.md**: Database schema and usage documentation
 
