@@ -20,6 +20,8 @@ calendar-aging behavior for four common chemistries (LFP, NMC, NCA, LMO). It
 is designed to support regression, classification, time-series, and
 unsupervised learning use cases out of the box.
 
+**Dataset source:** [EV Battery Health and Degradation Dataset on Kaggle](https://www.kaggle.com/datasets/vinay24baghira/ev-battery-health-and-degradation-dataset)
+
 ## 📊 Content
 
 | File | Rows | Description |

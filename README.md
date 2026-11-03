@@ -114,41 +114,73 @@ This project implements and compares **five machine learning classification mode
 ```
 battery-health-prediction-model/
 │
-├── ML_Assignment_2_Template.ipynb      # Complete Jupyter notebook with all models
 ├── app.py                               # Streamlit web application
 ├── requirements.txt                     # Python dependencies
 ├── README.md                            # This file
+├── LICENSE                              # MIT License
+├── test_data.csv                        # Test dataset for Streamlit app (10,000 samples)
 │
-├── model/                               # Trained model files
-│   ├── logistic_regression.pkl
-│   ├── decision_tree.pkl
-│   ├── knn.pkl
-│   ├── naive_bayes.pkl
-│   └── svm.pkl
+├── data/                                # Dataset files
+│   ├── ev_battery_health.csv          # Original dataset (50,000 samples)
+│   ├── data_dictionary.csv            # Data dictionary
+│   └── README_DB.md                   # Database documentation
 │
-├── scaler.pkl                          # Feature scaler
-├── target_label_encoder.pkl            # Label encoder for target
-├── test_data.csv                       # Test dataset for Streamlit app
+├── models/                              # Trained models and preprocessing
+│   ├── logistic_regression.pkl        # Logistic Regression model
+│   ├── decision_tree.pkl              # Decision Tree model
+│   ├── knn.pkl                        # K-Nearest Neighbors model
+│   ├── naive_bayes.pkl                # Naive Bayes model
+│   ├── svm.pkl                        # Support Vector Machine model
+│   ├── scaler.pkl                     # Feature scaler
+│   └── target_label_encoder.pkl       # Label encoder for target
 │
-├── ev_battery_health.csv              # Original dataset
-├── data_dictionary.csv                # Data dictionary
-├── model_comparison.csv               # Model metrics comparison
-└── model_comparison.png               # Visualization of model comparison
+├── notebooks/                           # Jupyter notebooks
+│   ├── ML_Assignment_2_Template.ipynb # Complete notebook with all models
+│   └── app.ipynb                      # App development notebook
+│
+├── results/                             # Model evaluation results
+│   ├── model_comparison.csv           # Model metrics comparison table
+│   └── model_comparison.png           # Visualization of model comparison
+│
+└── docs/                                # Documentation files
+    ├── assignment_content.txt         # Assignment requirements
+    └── ML_Assignment_2_AIML_26Oct26.pdf # Assignment PDF
 ```
 
 ---
 
 ## Project Structure
 
-### Files Description:
+### Folder Organization:
 
-- **ML_Assignment_2_Template.ipynb**: Complete implementation of data preprocessing, EDA, model training, and evaluation
+**Root Files:**
 - **app.py**: Interactive Streamlit web application for model deployment
 - **requirements.txt**: All Python package dependencies required for the project
-- **test_data.csv**: 10,000 test samples (20% of dataset) for model evaluation in Streamlit app
-- **model/*.pkl**: Serialized trained models for all five classifiers
+- **README.md**: Comprehensive project documentation
+- **LICENSE**: MIT License
+- **test_data.csv**: 10,000 test samples (20% of dataset) for Streamlit app evaluation
+
+**data/**: Dataset and database documentation
+- **ev_battery_health.csv**: Original dataset with 50,000 EV battery observations
+- **data_dictionary.csv**: Data dictionary describing all features
+- **README_DB.md**: Database schema and usage documentation
+
+**models/**: Trained models and preprocessing artifacts
+- **logistic_regression.pkl, decision_tree.pkl, knn.pkl, naive_bayes.pkl, svm.pkl**: Serialized trained models
 - **scaler.pkl**: Fitted StandardScaler for feature normalization
 - **target_label_encoder.pkl**: Label encoder for target classes
+
+**notebooks/**: Jupyter notebooks for analysis and development
+- **ML_Assignment_2_Template.ipynb**: Complete implementation of data preprocessing, EDA, model training, and evaluation
+- **app.ipynb**: App development and prototyping notebook
+
+**results/**: Model evaluation outputs
+- **model_comparison.csv**: Comprehensive metrics comparison table
+- **model_comparison.png**: Visual comparison of all models
+
+**docs/**: Assignment documentation
+- **assignment_content.txt**: Assignment requirements text
+- **ML_Assignment_2_AIML_26Oct26.pdf**: Official assignment PDF
 
 ---
 
@@ -281,7 +313,7 @@ The app will open in your default web browser at `http://localhost:8501`
 ## Streamlit App
 
 ### Live Deployment:
-**Streamlit App Link:** [Coming Soon - Will be deployed on Streamlit Community Cloud]
+**Streamlit App Link:** [https://battery-health-prediction-model.streamlit.app/](https://battery-health-prediction-model.streamlit.app/)
 
 ### Features:
 1. **Dataset Upload**: Upload test_data.csv to evaluate models
@@ -358,7 +390,7 @@ The app will open in your default web browser at `http://localhost:8501`
 **Student:** PRAKASH B
 **Student ID:** 2026AJ05668
 **Program:** M.Tech (AIML)
-**Institution:** BITS Pilani Work Integrated Learning Programmes
+**Institution:** BITS Pilani Work Integrated Learning Programme
 
 ---
 
