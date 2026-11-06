@@ -120,9 +120,12 @@ battery-health-prediction-model/
 ├── LICENSE                              # MIT License
 ├── test_data.csv                        # Test dataset for Streamlit app (10,000 samples)
 │
+├── .streamlit/                          # Streamlit configuration
+│   └── config.toml                     # Streamlit app settings
+│
 ├── data/                                # Dataset files
 │   ├── ev_battery_health.csv          # Original dataset (50,000 samples)
-│   ├── data_dictionary.csv            # Data dictionary
+│   ├── data_dictionary .csv           # Data dictionary
 │   └── README_DB.md                   # Database documentation
 │
 ├── models/                              # Trained models and preprocessing
@@ -135,16 +138,11 @@ battery-health-prediction-model/
 │   └── target_label_encoder.pkl       # Label encoder for target
 │
 ├── notebooks/                           # Jupyter notebooks
-│   ├── ML_Assignment_2_Template.ipynb # Complete notebook with all models
-│   └── app.ipynb                      # App development notebook
+│   └── app.ipynb                      # Complete notebook with all models
 │
-├── results/                             # Model evaluation results
-│   ├── model_comparison.csv           # Model metrics comparison table
-│   └── model_comparison.png           # Visualization of model comparison
-│
-└── docs/                                # Documentation files
-    ├── assignment_content.txt         # Assignment requirements
-    └── ML_Assignment_2_AIML_26Oct26.pdf # Assignment PDF
+└── results/                             # Model evaluation results
+    ├── model_comparison.csv           # Model metrics comparison table
+    └── model_comparison.png           # Visualization of model comparison
 ```
 
 ---
@@ -160,9 +158,12 @@ battery-health-prediction-model/
 - **LICENSE**: MIT License
 - **test_data.csv**: 10,000 test samples (20% of dataset) for Streamlit app evaluation
 
+**.streamlit/**: Streamlit configuration
+- **config.toml**: Streamlit app configuration settings
+
 **data/**: Dataset and database documentation
 - **ev_battery_health.csv**: Original dataset with 50,000 EV battery observations
-- **data_dictionary.csv**: Data dictionary describing all features
+- **data_dictionary .csv**: Data dictionary describing all features
 - **README_DB.md**: Database schema and usage documentation
 
 **models/**: Trained models and preprocessing artifacts
@@ -171,16 +172,11 @@ battery-health-prediction-model/
 - **target_label_encoder.pkl**: Label encoder for target classes
 
 **notebooks/**: Jupyter notebooks for analysis and development
-- **ML_Assignment_2_Template.ipynb**: Complete implementation of data preprocessing, EDA, model training, and evaluation
-- **app.ipynb**: App development and prototyping notebook
+- **app.ipynb**: Complete implementation of data preprocessing, EDA, model training, and evaluation
 
 **results/**: Model evaluation outputs
 - **model_comparison.csv**: Comprehensive metrics comparison table
 - **model_comparison.png**: Visual comparison of all models
-
-**docs/**: Assignment documentation
-- **assignment_content.txt**: Assignment requirements text
-- **ML_Assignment_2_AIML_26Oct26.pdf**: Official assignment PDF
 
 ---
 
@@ -298,7 +294,7 @@ python -c "import streamlit; import sklearn; import pandas; print('Installation 
 
 ### Running the Jupyter Notebook:
 ```bash
-jupyter notebook ML_Assignment_2_Template.ipynb
+jupyter notebook notebooks/app.ipynb
 ```
 
 ### Running the Streamlit App:
@@ -409,4 +405,4 @@ This project is submitted as part of the Machine Learning course assignment for 
 
 ---
 
-**Last Updated:** November 2, 2026
+**Last Updated:** November 6, 2026
